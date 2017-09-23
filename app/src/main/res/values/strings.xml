@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">TodoMvi</string>
+    <string name="create_a_task">Create a task…</string>
+    <string name="add">ADD</string>
+    <string name="retry">Retry</string>
+    <string name="error_loading_tasks">Error loading tasks</string>
+    <string name="error_adding_task">Error adding task</string>
+    <string name="error_marking_task_complete">Error marking task complete</string>
+    <string name="error_marking_task_incomplete">Error marking task incomplete </string>
+</resources>
