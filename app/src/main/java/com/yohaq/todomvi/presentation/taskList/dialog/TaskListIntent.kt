@@ -1,4 +1,4 @@
-package com.yohaq.todomvi.presentation.taskList
+package com.yohaq.todomvi.presentation.taskList.dialog
 
 import com.yohaq.todomvi.data.Task
 import java.util.*

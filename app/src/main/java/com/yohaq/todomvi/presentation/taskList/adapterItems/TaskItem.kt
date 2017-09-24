@@ -5,7 +5,7 @@ import android.view.View
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import com.yohaq.todomvi.R
-import com.yohaq.todomvi.presentation.taskList.TaskItemViewState
+import com.yohaq.todomvi.presentation.taskList.dialog.TaskItemViewState
 import kotlinx.android.synthetic.main.item_task.view.*
 
 /**
