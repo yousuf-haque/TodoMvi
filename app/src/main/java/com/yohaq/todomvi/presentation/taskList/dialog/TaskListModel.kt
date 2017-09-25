@@ -23,28 +23,34 @@ fun taskListModel(
 
     val TAG = "TaskListModel"
 
-
-    val intentStateReducers: Observable<TaskListStateReducer> = intentStream.flatMap { intent ->
-        when (intent) {
-            is TaskListIntent.AddTaskRequest -> getAddTasksReducer(intent, addRequestBuilder)
-            TaskListIntent.RetryLoadingTasks -> getLoadTasksReducer(taskListStream)
-            is TaskListIntent.UpdateTaskDraft -> getUpdateTaskDraftReducer(intent)
-            is TaskListIntent.MarkTaskComplete -> getMarkTaskCompleteReducer(intent, markTaskCompleteBuilder)
-            is TaskListIntent.MarkTaskIncomplete -> getMarkTaskIncompleteReducer(intent, markTaskIncompleteBuilder)
-            is TaskListIntent.RetryAddTaskRequest -> getRetryAddRequestReducer(intent, addRequestBuilder)
-            is TaskListIntent.RetryMarkTaskComplete -> getRetryMarkTaskCompleteReducer(intent, markTaskCompleteBuilder)
-            is TaskListIntent.RetryMarkTaskIncomplete -> getRetryMarkTaskIncompleteReducer(intent, markTaskIncompleteBuilder)
-            is TaskListIntent.ClearFailedMarkIncompleteRequest -> getClearFailedMarkIncompleteReducer(intent)
-            is TaskListIntent.ClearFailedMarkCompleteRequest -> getClearFailedMarkCompleteReducer(intent)
-            is TaskListIntent.ClearFailedAddTaskRequest -> getClearFailedAddTaskReducer(intent)
-        }
-    }
+    fun getStateReducer(intent: TaskListIntent) =
+            when (intent) {
+                is TaskListIntent.AddTaskRequest -> getAddTasksReducer(intent, addRequestBuilder)
+                TaskListIntent.RetryLoadingTasks -> getLoadTasksReducer(taskListStream)
+                is TaskListIntent.UpdateTaskDraft -> getUpdateTaskDraftReducer(intent)
+                is TaskListIntent.MarkTaskComplete -> getMarkTaskCompleteReducer(intent, markTaskCompleteBuilder)
+                is TaskListIntent.MarkTaskIncomplete -> getMarkTaskIncompleteReducer(intent, markTaskIncompleteBuilder)
+                is TaskListIntent.RetryAddTaskRequest -> getRetryAddRequestReducer(intent, addRequestBuilder)
+                is TaskListIntent.RetryMarkTaskComplete -> getRetryMarkTaskCompleteReducer(intent, markTaskCompleteBuilder)
+                is TaskListIntent.RetryMarkTaskIncomplete -> getRetryMarkTaskIncompleteReducer(intent, markTaskIncompleteBuilder)
+                is TaskListIntent.ClearFailedMarkIncompleteRequest -> getClearFailedMarkIncompleteReducer(intent)
+                is TaskListIntent.ClearFailedMarkCompleteRequest -> getClearFailedMarkCompleteReducer(intent)
+                is TaskListIntent.ClearFailedAddTaskRequest -> getClearFailedAddTaskReducer(intent)
+            }
 
 
 
-    return getLoadTasksReducer(taskListStream)
-            .mergeWith(intentStateReducers)
-            .scan(TaskListState.LoadingTasks as TaskListState,
+
+    val initialStateReducer: Observable<TaskListStateReducer> = getLoadTasksReducer(taskListStream)
+
+    val intentStateReducers: Observable<TaskListStateReducer> = intentStream.flatMap { intent -> getStateReducer(intent) }
+
+    val stateReducerStream: Observable<TaskListStateReducer> = initialStateReducer.mergeWith(intentStateReducers)
+
+
+    return stateReducerStream
+            .scan(
+                    TaskListState.LoadingTasks as TaskListState,
                     { oldState, reducer ->
                         reducer(oldState).also {
                             Log.d(TAG, "oldState:\n\t$oldState")
@@ -53,6 +59,7 @@ fun taskListModel(
                     }
             )
 }
+
 
 /*
     A reducer is a function that takes one state and spits out another.
