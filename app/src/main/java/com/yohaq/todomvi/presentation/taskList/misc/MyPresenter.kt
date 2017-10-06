@@ -3,14 +3,13 @@ package com.yohaq.todomvi.presentation.taskList.misc
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
-import javax.inject.Inject
 
 /**
  * Created by yousufhaque on 9/24/17.
  */
 
 
-class MyPresenter @Inject constructor(
+class MyPresenter (
         private val fooStream: Observable<List<Foo>>,
         private val barStream: Observable<List<Bar>>,
         private val bazStream: Observable<List<Baz>>,

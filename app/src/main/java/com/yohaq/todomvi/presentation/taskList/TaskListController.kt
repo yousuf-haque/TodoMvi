@@ -1,6 +1,5 @@
 package com.yohaq.todomvi.presentation.taskList
 
-import android.app.Activity
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,9 +10,10 @@ import com.jakewharton.rxbinding2.widget.textChanges
 import com.jakewharton.rxrelay2.PublishRelay
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
+import com.yohaq.todomvi.ApplicationContainer
 import com.yohaq.todomvi.R
-import com.yohaq.todomvi.TodoMviApplication
-import com.yohaq.todomvi.depdendencyInjection.UiComponent
+import com.yohaq.todomvi.TaskListComponent
+import com.yohaq.todomvi.TaskListDialog
 import com.yohaq.todomvi.extensions.*
 import com.yohaq.todomvi.presentation.taskList.adapterItems.TaskItem
 import com.yohaq.todomvi.presentation.taskList.dialog.TaskListIntent
@@ -45,11 +45,8 @@ class TaskListController : Controller() {
                         .firstOrError()
                         .map(ControllerLifecycleEvent.PostContextAvailable::controller)
                         .map { controller -> controller.activity ?: throw RuntimeException("Unable to build component") }
-                        .map(Activity::getApplication)
-                        .cast(TodoMviApplication::class.java)
-                        .map(TodoMviApplication::uiComponent)
-                        .map(UiComponent::taskListComponent)
-                        .map(TaskListComponent::dialog)
+                        .compose(ApplicationContainer::buildTaskListComponent)
+                        .map(TaskListComponent::taskListDialog)
 
 
         /*

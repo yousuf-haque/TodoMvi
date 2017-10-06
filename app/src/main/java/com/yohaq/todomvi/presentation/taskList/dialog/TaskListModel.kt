@@ -13,7 +13,7 @@ import io.reactivex.Single
  * Created by yousufhaque on 9/17/17.
  */
 
-fun taskListModel(
+fun buildTaskListStateStream(
         intentStream: Observable<TaskListIntent>,
         taskListStream: Single<List<Task>>,
         addRequestBuilder: AddTaskRequestBuilder,
